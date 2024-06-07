@@ -3,6 +3,8 @@
 #include <default.c>
 #include <camera.c>
 #include <ackphysx.h>
+#include <mtlFX.c>
+
 var vg;
 SOUND* carai1_wav = "engine.ogg";
 ///////////////////////////////
@@ -19,9 +21,10 @@ function main()
 	//	video_screen = 1;
 	
 	level_load("1.wmb");
-
+camera.ambient = 0;
 	pXent_settype(NULL,PH_STATIC,PH_PLANE); 
 	pX_setgravity(vector(0,0,-9.81));
+
 }
 
 function actor(type)
@@ -38,7 +41,7 @@ PANEL* my_panel =
 {
 	pos_x = 0;
 	pos_y = 0;
-	digits(1000,500`, "%2.2f","Arial#20bi", 1, vg); 
+	digits(1000,500, "%2.2f","Arial#20bi", 1, vg); 
 	//	
 	flags = SHOW ;
 }
@@ -524,6 +527,11 @@ action ATrafficLight()
 
 //player action
 
+action Player()
+{
+	player = me;
+}
+
 action ACar()
 {
 	set(my,FLAG2);
@@ -550,7 +558,7 @@ action ACar()
 	pXcon_add ( PH_WHEEL, BRwheel, me, 0 );
 	
 	// use this to setup px settings
-	temp.x=10000;  //wheel suspension spring constant (default: 1000). Adjust this to the car mass and gravity.
+	temp.x=20000;  //wheel suspension spring constant (default: 1000). Adjust this to the car mass and gravity.
 	temp.y=500;    //wheel suspension damper constant (default: 100). 
 	temp.z=6;      //wheel suspension way in quants (default: wheel radius). 
 	temp2.x=500;   //wheel longitudinal friction curve scale factor in percent (default = 100). 
@@ -576,7 +584,7 @@ action ACar()
 	var carai_engine = ent_playloop(my, carai1_wav, 300);
 	while(1)
 	{
-		accel=-(key_w-key_s)*3500;		
+		accel=-(key_w-key_s)*13500;		
 		
 		temp.x=accel*cosv(my.pan)-0*sinv(my.pan);
 		temp.y=0*cosv(my.pan)+accel*sinv(my.pan);
@@ -586,13 +594,13 @@ action ACar()
 		v= vec_dist(temp,nullvector)/10;
 		my.skill1=v;	
 		snd_tune(carai_engine, 0, v, 0);
-		vg=v;
+		vg=bmap_skycube.width;
 		steer=-(key_a-key_d);		
 		
-		pXcon_setwheel (FLwheel,steer*(20-clamp(v/4,0,15)),accel,0);
-		pXcon_setwheel (FRwheel,steer*(20-clamp(v/4,0,15)),accel,0); 
-		pXcon_setwheel (BLwheel,0,0,0);
-		pXcon_setwheel (BRwheel,0,0,0);
+		pXcon_setwheel (FLwheel,steer*(20-clamp(v/4,0,15)),0,0);
+		pXcon_setwheel (FRwheel,steer*(20-clamp(v/4,0,15)),0,0); 
+		pXcon_setwheel (BLwheel,0,accel/2,key_space*2000);
+		pXcon_setwheel (BRwheel,0,accel/2,key_space*2000);
 		
 		wait(1);		
 	}

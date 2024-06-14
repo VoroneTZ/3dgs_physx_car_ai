@@ -109,7 +109,7 @@ BMAP* bmap_skycube;
 function init_skycube()
 {
 	
-		CubeInit();
+		
 		
 	if (!bmap_skycube) {
 		if (!sky_cube_level) {
@@ -133,38 +133,67 @@ function mtl_envmap_view()
  	mtl.matrix43 = 0;	
 }
 
+int nv=2;
+  
 
 function mtl_envmap_init()
 {	
-	init_skycube();			//init, get black image
-		
+	ENTITY* lme=my;
+	nv=nv+1;
+
+	VECTOR* ppos;
+	VIEW* cv_w;
+	BMAP* lbm;
+	lbm = bmap_createblack(1536,256,24);
+	bmap_to_cubemap(lbm);
+	
+	cv_w=view_create(nv);
+	
+	cv_w.size_x=256;
+	cv_w.size_y=256;
+	cv_w.aspect = 1;
+	cv_w.arc=90;
+	set(cv_w,SHOW);
+
+	cv_w.genius =lme;
+	
+	ppos = vector (lme.x,lme.y,lme.z+10);
+	vec_set(cv_w.x,ppos);
+	vec_set(cv_w.pan,west);	
+	
+	cv_w.bmap = lbm;
+	
 	mtl.skin1 = lbm;	
-	mtl.event = mtl_envmap_view;
-	set(mtl,ENABLE_VIEW);
+
+
 	while (1)
 	{
-		VECTOR* ppos;
-		ppos = vector (player.x,player.y,player.z+10);
+		mat_set(mtl.matrix,matViewInv);
+ 		mtl.matrix41 = 0;
+ 		mtl.matrix42 = 0;
+ 		mtl.matrix43 = 0;	
+ 		
+		ppos = vector (lme.x,lme.y,lme.z+10);
 		
 		vec_set(cv_w.x,ppos);
 		vec_set(cv_w.pan,west);
 		cv_w.pos_x = 0;
-		wait(1);
+		wait(4);
 		cv_w.pos_x = 256;
 		vec_set(cv_w.pan,north);
-		wait(1);
+		wait(4);
 		cv_w.pos_x = 512;
 		vec_set(cv_w.pan,east);
-		wait(1);
+		wait(4);
 		cv_w.pos_x = 768;
 		vec_set(cv_w.pan,south);
-		wait(1);
+		wait(4);
 		cv_w.pos_x = 1024;
 		vec_set(cv_w.pan,down);
-		wait(1);
+		wait(4);
 		cv_w.pos_x = 1280;
 		vec_set(cv_w.pan,up);
-		wait(1);
+		wait(4);
 	}
 }
 
@@ -471,10 +500,12 @@ action fx_bumpGlass()
 //Variable3: Not used
 //Variable4: Not used
 MATERIAL* mtl_envMap =
-{
+{	
+
  	event = mtl_envmap_init;
- 	effect = "envMap.fx";
+  	effect = "envMap.fx";
 }
+
 
 //action: fx_envmap
 //title: Environment mapping

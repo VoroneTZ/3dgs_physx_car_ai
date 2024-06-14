@@ -3,7 +3,7 @@
 #include <default.c>
 #include <camera.c>
 #include <ackphysx.h>
-#include <mtlFX.c>
+#include "mtlFX.c"
 
 var vg;
 SOUND* carai1_wav = "engine.ogg";
@@ -21,7 +21,7 @@ function main()
 	//	video_screen = 1;
 	
 	level_load("1.wmb");
-camera.ambient = 0;
+	camera.ambient = 0;
 	pXent_settype(NULL,PH_STATIC,PH_PLANE); 
 	pX_setgravity(vector(0,0,-9.81));
 
@@ -103,7 +103,8 @@ action ACar_Enemy()
 	var v;
 	actor(PH_CONVEX);
 	pXent_setfriction(my,50); 
-	
+	//my.material = mtl_DynEnvMap;
+	AssignEnvMap(my);
 	VECTOR temp2;
 	pXent_setmassoffset(my,vector(0,0,-10),NULL);
 	
@@ -408,13 +409,13 @@ action ACar_Enemy()
 						}
 					}
 					else
-						{							
-							if (v<4) // if AI stoped to early, AI can add some speed
-							{
-								accel=800;
-								str_cat(debugs,"go");
-							}							
-						}
+					{							
+						if (v<4) // if AI stoped to early, AI can add some speed
+						{
+							accel=800;
+							str_cat(debugs,"go");
+						}							
+					}
 					
 				}				
 			}
@@ -536,6 +537,7 @@ action ACar()
 {
 	set(my,FLAG2);
 	set(my,FLAG1);
+	AssignEnvMap(my);
 	var accel=0;
 	var steer=0;
 	var gravity[3] = {0,0, -386};
@@ -585,7 +587,7 @@ action ACar()
 	while(1)
 	{
 		accel=-(key_w-key_s)*13500;		
-		
+		//	vg=nv;
 		temp.x=accel*cosv(my.pan)-0*sinv(my.pan);
 		temp.y=0*cosv(my.pan)+accel*sinv(my.pan);
 		temp.z=0;
@@ -594,7 +596,7 @@ action ACar()
 		v= vec_dist(temp,nullvector)/10;
 		my.skill1=v;	
 		snd_tune(carai_engine, 0, v, 0);
-		vg=bmap_skycube.width;
+		//	vg=bmap_skycube.width;
 		steer=-(key_a-key_d);		
 		
 		pXcon_setwheel (FLwheel,steer*(20-clamp(v/4,0,15)),0,0);

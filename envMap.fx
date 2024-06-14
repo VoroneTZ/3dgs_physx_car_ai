@@ -21,7 +21,7 @@ technique envmap
       ColorOp[0] = Modulate2x;
 
       Texture[1] = <entSkin1>;
-		TextureFactor = 0xA0FFFFFF; // blend by 25% (= 0x40)
+		TextureFactor = 0x40FFFFFF; // blend by 25% (= 0x40)
       ColorArg1[1] = Texture;
       ColorArg2[1] = Current;
 		ColorOp[1] = BlendFactorAlpha; 

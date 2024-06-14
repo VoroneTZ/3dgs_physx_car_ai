@@ -1,6 +1,6 @@
 
 
-var cuberesolution=128; // set up the resolution of the cube here
+var cuberesolution=256; // set up the resolution of the cube here
 var west[3]={180,0,0};
 var north[3]={90,0,0};
 var east[3]={0,0,0};
@@ -46,15 +46,15 @@ function mtl_Dynenvmap_init()
 	
 	mtl.skin1 = lbm;	
 	
-	
+	mat_set(mtl.matrix,matViewInv);
+	mtl.matrix41 = 0;
+	mtl.matrix42 = 0;
+	mtl.matrix43 = 0;	
 
 	while (lnv==my.skill14)
 	{
 		
-		mat_set(mtl.matrix,matViewInv);
-		mtl.matrix41 = 0;
-		mtl.matrix42 = 0;
-		mtl.matrix43 = 0;	
+
 		
 		ppos = vector (my.x,my.y,my.z+10);
 		
@@ -62,41 +62,24 @@ function mtl_Dynenvmap_init()
 		vec_set(cv_w.pan,west);
 		cv_w.pos_x = 0;
 		
-		mat_set(mtl.matrix,matViewInv);
-		mtl.matrix41 = 0;
-		mtl.matrix42 = 0;
-		mtl.matrix43 = 0;	
+
 		wait(3);
 		cv_w.pos_x = cuberesolution;
 		vec_set(cv_w.pan,north);
-		
-		mat_set(mtl.matrix,matViewInv);
-		mtl.matrix41 = 0;
-		mtl.matrix42 = 0;
-		mtl.matrix43 = 0;	
+
 		wait(3);
 		cv_w.pos_x = cuberesolution*2;
 		vec_set(cv_w.pan,east);
-		mat_set(mtl.matrix,matViewInv);
-		mtl.matrix41 = 0;
-		mtl.matrix42 = 0;
-		mtl.matrix43 = 0;	
+
 		wait(3);
 		cv_w.pos_x = cuberesolution*3;
 		vec_set(cv_w.pan,south);
 		
-		mat_set(mtl.matrix,matViewInv);
-		mtl.matrix41 = 0;
-		mtl.matrix42 = 0;
-		mtl.matrix43 = 0;	
+
 		wait(3);
 		cv_w.pos_x = cuberesolution*4;
 		vec_set(cv_w.pan,down);
-		
-		mat_set(mtl.matrix,matViewInv);
-		mtl.matrix41 = 0;
-		mtl.matrix42 = 0;
-		mtl.matrix43 = 0;	
+
 		wait(3);
 		cv_w.pos_x = cuberesolution*5;
 		vec_set(cv_w.pan,up);
@@ -105,14 +88,6 @@ function mtl_Dynenvmap_init()
 	}
 }
 
-function m_envMapView()
-{
-	mat_set(mtl.matrix,matViewInv);
-	mtl.matrix41 = 0;
-	mtl.matrix42 = 0;
-	mtl.matrix43 = 0;	
-
-}
 
 function mtl_Stenvmap_init()
 {	
@@ -149,10 +124,10 @@ function mtl_Stenvmap_init()
 	mtl.skin1 = lbm;	
 
 	
-	mat_set(mtl.matrix,matViewInv);
-	mtl.matrix41 = 0;
-	mtl.matrix42 = 0;
-	mtl.matrix43 = 0;	
+//	mat_set(mtl.matrix,matViewInv);
+//	mtl.matrix41 = 0;
+//	mtl.matrix42 = 0;
+//	mtl.matrix43 = 0;	
 	
 	ppos = vector (my.x,my.y,my.z+10);
 	
@@ -194,7 +169,7 @@ function AssignEnvMap(ENTITY* AEnt)
 	MATERIAL* l_DynEnvMap;
 	l_DynEnvMap = mtl_create();
 	l_DynEnvMap.event = mtl_Dynenvmap_init;	
-	l_DynEnvMap.effect = "envMap.fx";
+	l_DynEnvMap.effect = "envmirror.fx";
 	AEnt.material = l_DynEnvMap;
 	
 }
@@ -205,7 +180,7 @@ function AssignStaticEnvMap(ENTITY* AEnt)
 	MATERIAL* l_SEnvMap;
 	l_SEnvMap = mtl_create();
 	l_SEnvMap.event = mtl_Stenvmap_init;	
-	l_SEnvMap.effect = "envMap2.fx";
+	l_SEnvMap.effect = "envmirror.fx";
 	AEnt.material = l_SEnvMap;
 	
 }

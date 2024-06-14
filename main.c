@@ -534,7 +534,7 @@ action Player()
 }
 
 action ACar()
-{
+{ //return 0;
 	set(my,FLAG2);
 	set(my,FLAG1);
 	AssignEnvMap(my);

@@ -50,12 +50,12 @@ VS_OUTPUT VS(
 	Out.Eye = P-vecViewPos ;
 	Out.Norm = -N;
 	
-	Out.factor = 1;//DoDefault(vecSkill41.y*0.005,0.25); // Texture	
+	Out.factor = 0;//DoDefault(vecSkill41.y*0.005,0.25); // Texture	
 	
-	float fSpread = DoDefault(vecSkill41.x*0.0005,0.025);
-	Out.rainbow.z = 1.0-2*fSpread;
-	Out.rainbow.y = Out.rainbow.z-fSpread;
-	Out.rainbow.x = Out.rainbow.y-fSpread;
+	float fSpread = 0;//DoDefault(vecSkill41.x*0.0005,0.025);
+	Out.rainbow.z = 0;//1.0-2*fSpread;
+	Out.rainbow.y = 0;Out.rainbow.z-fSpread;
+	Out.rainbow.x = 0;Out.rainbow.y-fSpread;
 	return Out;
 }
 
@@ -67,17 +67,9 @@ float4 envglass_PS ( VS_OUTPUT In) : COLOR
 	float3 norm = In.Norm;
 	float3 vec = reflect(normalize(In.Eye), norm);
 	float4 Environment = texCUBE(sEnvironment,vec);
-// generate a rainbow effect		
-	float3 vec_red = refract(normalize(In.Eye), norm, In.rainbow.x);//0.95);
-	float3 vec_green = refract(normalize(In.Eye), norm, In.rainbow.y); //0.9525);
-	float3 vec_blue = refract(normalize(In.Eye), norm, In.rainbow.z); //0.955);
-	float4 EnvRefract = float4(texCUBE(sEnvironment,vec_red).r,
-	   texCUBE(sEnvironment,vec_green).g,
-	   texCUBE(sEnvironment,vec_blue).b,1);
-	float fresnel = 0-(dot(norm,-normalize(In.Eye)));
-	fresnel = pow(fresnel,1.5);
-	OutColor.rgb = (fAlpha*lerp(color.rgb,EnvRefract,1-color.a) + fAlbedo*Environment.rgb*fresnel);
-	OutColor.a = color.a + pow(fresnel,0.25);
+
+	OutColor.rgb = (0.3*lerp(color.rgb,0.5,0) + fAlbedo*Environment.rgb*2);
+	OutColor.a = 1;
 	return OutColor;
 }
 

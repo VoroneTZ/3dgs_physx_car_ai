@@ -1,6 +1,6 @@
 
 
-var cuberesolution=256; // set up the resolution of the cube here
+var cuberesolution=128; // set up the resolution of the cube here
 var west[3]={180,0,0};
 var north[3]={90,0,0};
 var east[3]={0,0,0};
@@ -54,37 +54,39 @@ function mtl_Dynenvmap_init()
 	while (lnv==my.skill14)
 	{
 		
+		if (!(my.eflags&CLIPPED))
+		{
+			ppos = vector (my.x,my.y,my.z+10);
+			
+			vec_set(cv_w.x,ppos);
+			vec_set(cv_w.pan,west);
+			cv_w.pos_x = 0;
+			
 
-		
-		ppos = vector (my.x,my.y,my.z+10);
-		
-		vec_set(cv_w.x,ppos);
-		vec_set(cv_w.pan,west);
-		cv_w.pos_x = 0;
-		
+			wait(3);
+			cv_w.pos_x = cuberesolution;
+			vec_set(cv_w.pan,north);
 
-		wait(3);
-		cv_w.pos_x = cuberesolution;
-		vec_set(cv_w.pan,north);
+			wait(3);
+			cv_w.pos_x = cuberesolution*2;
+			vec_set(cv_w.pan,east);
 
-		wait(3);
-		cv_w.pos_x = cuberesolution*2;
-		vec_set(cv_w.pan,east);
+			wait(3);
+			cv_w.pos_x = cuberesolution*3;
+			vec_set(cv_w.pan,south);
+			
 
-		wait(3);
-		cv_w.pos_x = cuberesolution*3;
-		vec_set(cv_w.pan,south);
-		
+			wait(3);
+			cv_w.pos_x = cuberesolution*4;
+			vec_set(cv_w.pan,down);
 
-		wait(3);
-		cv_w.pos_x = cuberesolution*4;
-		vec_set(cv_w.pan,down);
-
-		wait(3);
-		cv_w.pos_x = cuberesolution*5;
-		vec_set(cv_w.pan,up);
-		wait(3);
-		
+			wait(3);
+			cv_w.pos_x = cuberesolution*5;
+			vec_set(cv_w.pan,up);
+			wait(3);
+		}
+		else
+		wait(5);
 	}
 }
 
@@ -124,10 +126,10 @@ function mtl_Stenvmap_init()
 	mtl.skin1 = lbm;	
 
 	
-//	mat_set(mtl.matrix,matViewInv);
-//	mtl.matrix41 = 0;
-//	mtl.matrix42 = 0;
-//	mtl.matrix43 = 0;	
+	//	mat_set(mtl.matrix,matViewInv);
+	//	mtl.matrix41 = 0;
+	//	mtl.matrix42 = 0;
+	//	mtl.matrix43 = 0;	
 	
 	ppos = vector (my.x,my.y,my.z+10);
 	

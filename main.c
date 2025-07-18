@@ -6,6 +6,7 @@
 #include "mtlFX.c"
 
 var vg;
+var FTrafficCount=0;
 SOUND* carai1_wav = "engine.ogg";
 ///////////////////////////////
 function main()
@@ -23,7 +24,7 @@ function main()
 	level_load("1.wmb");
 	camera.ambient = 0;
 	pXent_settype(NULL,PH_STATIC,PH_PLANE); 
-	pX_setgravity(vector(0,0,-9.81));
+//	pX_setgravity(vector(0,0,-9.81));
 
 }
 
@@ -96,22 +97,76 @@ action ACar_Enemy()
 {
 	set(my,FLAG2);
 	set(my,FLAG1);
+	set(my,TRANSLUCENT);
+	my.alpha=0;
+	path_set(me,"path_001");
+		FTrafficCount+=1;
+	var node_num1=1;
+	var node_num2;
+	var node_num3;
+	var node_num4;
+	var node_count=1;
+	VECTOR tempv;
+	VECTOR tempang;
+	VECTOR vnode1;
+	VECTOR vnode2;
+	VECTOR vnode3;
+	VECTOR vnode4;
+		VECTOR temp;
+	var nodeskills[6];
+	wait(1);
+	var z=999999;
+	var p;
+		var v;
+	node_num1=1;
+	
+	// lets find nearest node and set it as first node
+	
+	while (path_getnode(my,node_num1, vnode1, nodeskills)!=0)
+	{
+		v=vec_dist(my.x,vnode1);
+		if (v<=z)
+		{
+			z=v;
+			node_count=node_num1;			
+		}
+		node_num1+=1;		
+	}
+	// and then get next nodes
+	z=0;
+	node_num1=node_count;	
+	path_getnode(my,node_num1, vnode1, nodeskills);	
+	
+	node_num2=GetNextNode(node_num1,nodeskills);	
+	path_getnode(my,node_num2, vnode2, nodeskills);
+	
+	node_num3=GetNextNode(node_num2,nodeskills);	
+	path_getnode(my,node_num3, vnode3, nodeskills);
+	
+	node_num4=GetNextNode(node_num3,nodeskills);	
+	path_getnode(my,node_num4, vnode4, nodeskills);
+	
+
+	
+	
+
+	
 	var accel=0;
 	var steer=0;
 	var gravity[3] = {0,0, -386};
-	VECTOR temp;
-	var v;
+
+
 	actor(PH_CONVEX);
 	pXent_setfriction(my,50); 
 	//my.material = mtl_DynEnvMap;
-	AssignEnvMap(my);
-	VECTOR temp2;
-	pXent_setmassoffset(my,vector(0,0,-10),NULL);
 	
-	ENTITY* FLwheel = ent_create("buggy_rad1.mdl",vector(my.x+86,my.y-43,my.z+13),NULL);
-	ENTITY* FRwheel = ent_create("buggy_rad1.mdl",vector(my.x+86,my.y+43,my.z+13),NULL);
-	ENTITY* BLwheel = ent_create("buggy_rad1.mdl",vector(my.x-70,my.y+43,my.z+13),NULL);
-	ENTITY* BRwheel = ent_create("buggy_rad1.mdl",vector(my.x-70,my.y-43,my.z+13),NULL);
+	VECTOR temp2;
+	pXent_setmassoffset(my,vector(0,0,-30),NULL);
+	pXent_setmass(my, 100);
+	ENTITY* FLwheel = ent_create("buggy_rad1.mdl",vector(my.x+86,my.y-43,my.z-20),NULL);
+	ENTITY* FRwheel = ent_create("buggy_rad1.mdl",vector(my.x+86,my.y+43,my.z-20),NULL);
+	ENTITY* BLwheel = ent_create("buggy_rad1.mdl",vector(my.x-70,my.y+43,my.z-20),NULL);
+	ENTITY* BRwheel = ent_create("buggy_rad1.mdl",vector(my.x-70,my.y-43,my.z-20),NULL);
 	pXcon_add ( PH_WHEEL, FLwheel, me, 0 );
 	pXcon_add ( PH_WHEEL, FRwheel, me, 0 );
 	pXcon_add ( PH_WHEEL, BLwheel, me, 0 );
@@ -131,48 +186,13 @@ action ACar_Enemy()
 	set(FRwheel,INVISIBLE);
 	set(BLwheel,INVISIBLE);
 	set(BRwheel,INVISIBLE);
-	var node_num1=1;
-	var node_num2;
-	var node_num3;
-	var node_num4;
-	var node_count=1;
-	VECTOR tempv;
-	VECTOR tempang;
-	VECTOR vnode1;
-	VECTOR vnode2;
-	VECTOR vnode3;
-	VECTOR vnode4;
-	var nodeskills[6];
-	wait(1);
-	var z=999999;
-	var p;
-	node_num1=1;
 	
-	// lets find nearest node and set it as first node
-	
-	while (path_getnode(my,node_num1, vnode1, nodeskills)!=0)
-	{
-		v=vec_dist(my.x,vnode1);
-		if (v<=z)
-		{
-			z=v;
-			node_count=node_num1;			
-		}
-		node_num1+=1;		
-	}
-	// and then get next nodes
-	z=0;
-	node_num1=node_count;	
-	path_getnode(my,node_num1, vnode1, nodeskills);	
+	vec_set(temp,vnode2); 
+  vec_sub(temp,my.x);
+  var temp3 =my.pan;
+  vec_to_angle(temp3,temp);
+  pXent_rotate (my, NULL, temp3); 
 
-	node_num2=GetNextNode(node_num1,nodeskills);	
-	path_getnode(my,node_num2, vnode2, nodeskills);
-	
-	node_num3=GetNextNode(node_num2,nodeskills);	
-	path_getnode(my,node_num3, vnode3, nodeskills);
-	
-	node_num4=GetNextNode(node_num3,nodeskills);	
-	path_getnode(my,node_num4, vnode4, nodeskills);
 	STRING* debugs="1";
 	ANGLE vangle;
 	ANGLE v3angle;
@@ -180,10 +200,16 @@ action ACar_Enemy()
 	var brake;
 	wait(1);
 	var carai_engine = ent_playloop(my, carai1_wav, 300);
+		while (my.alpha<100){my.alpha+=1; wait(1);}reset(my,TRANSLUCENT);
+		AssignEnvMap(my);
+	var lanim,lamin2;	
 	while(1)
 	{
+	
 		//	camera.x=my.x;
 		//	camera.y=my.y;
+		
+		if (vec_dist(my.x,player.x)>6000){ent_remove(me);FTrafficCount-=1;return;}
 		
 		if (vec_dist(my.x,vnode1)>300)
 		{
@@ -264,12 +290,12 @@ action ACar_Enemy()
 			
 		}
 		
-		draw_line3d(tempv,NULL,100); // move to first corner   
-		draw_line3d(my.x,vector(0,255,0),100);
-		draw_line3d(vnode1,vector(255,0,0),100);
-		draw_line3d(vnode2,vector(255,0,0),100);
-		draw_line3d(vnode3,vector(255,0,0),100);
-		draw_line3d(vnode4,vector(255,0,0),100);
+	//	draw_line3d(tempv,NULL,100); // move to first corner   
+	//	draw_line3d(my.x,vector(0,255,0),100);
+	//	draw_line3d(vnode1,vector(255,0,0),100);
+	//	draw_line3d(vnode2,vector(255,0,0),100);
+	//	draw_line3d(vnode3,vector(255,0,0),100);
+	//	draw_line3d(vnode4,vector(255,0,0),100);
 		
 		temp.x=accel*cosv(my.pan);
 		temp.y=accel*sinv(my.pan);
@@ -337,7 +363,8 @@ action ACar_Enemy()
 		v= vec_dist(temp,nullvector)/10;	
 		my.skill1=v;	
 		snd_tune(carai_engine, 0, v, 0);
-		my.skin=1;
+		lanim=lanim+v/300;
+		
 		
 		// if 3rd path node have big angle, AI will slow down or stop
 		if (abs(brake)>10)
@@ -375,8 +402,8 @@ action ACar_Enemy()
 			// if AI saw something with +- same pan...
 			if (abs(p-yp)<30) 
 			{		
-				draw_line3d(my.x,NULL,100); 
-				draw_line3d(you.x,vector(0,0,255),100);
+			//	draw_line3d(my.x,NULL,100); 
+			//	draw_line3d(you.x,vector(0,0,255),100);
 				
 				accel=0; 
 				if (v>10) // and AI have velocity >10
@@ -436,8 +463,8 @@ action ACar_Enemy()
 			
 			temp.z+=100;
 			vec_set(temp,my.x);
-			if (vec_to_screen(temp,camera)) 
-			draw_text(debugs,temp.x,temp.y,vector(100,100,255));
+		//	if (vec_to_screen(temp,camera)) 
+		//	draw_text(debugs,temp.x,temp.y,vector(100,100,255));
 			
 		}
 		// if another car is near on the right side, AI will pass it
@@ -451,11 +478,13 @@ action ACar_Enemy()
 				accel=-1800;
 			}
 			str_cat(debugs,"pass");
-			if (vec_to_screen(temp,camera)) 
-			draw_text(debugs,temp.x,temp.y,vector(100,100,255));			
+		//	if (vec_to_screen(temp,camera)) 
+		//	draw_text(debugs,temp.x,temp.y,vector(100,100,255));			
 		}
 		
-		if (accel<0){	my.skin=2;	}
+		if (accel<0){	lamin2=1;	}else{lamin2=0;}
+		if (lanim>2){lanim=0;}		
+		my.skin=1+(lamin2*2)+lanim;
 		
 		pXcon_setwheel (FLwheel,-steer,0,0);
 		pXcon_setwheel (FRwheel,-steer,0,0); // steer to the right
@@ -464,6 +493,77 @@ action ACar_Enemy()
 		
 		wait(1);		
 	}
+}
+
+action ATrafficSpawner()
+{
+	var node_num1=1;
+	var node_num2;var v;
+	var z=999999;
+	var node_num3;
+	var node_num4;
+	var node_count=1;
+	VECTOR tempv;
+	VECTOR tempang;
+	VECTOR vnode1;
+	VECTOR vnode2;
+	VECTOR vnode3;
+	ENTITY* LCar;
+	VECTOR vnode4;
+	var nodeskills[6];
+	wait(-1);
+	var ltypecar;
+	while(1)
+	{
+		if (FTrafficCount<10)
+		{
+	my.x =player.x+(random(10000))-5000;
+	my.y =player.y+(random(10000))-5000;
+	my.z =151;
+	wait(1);
+	while(vec_dist(my.x,player.x)<4000)
+	{
+	my.x =player.x+(random(10000))-5000;
+	my.y =player.y+(random(10000))-5000;
+	my.z =player.z;
+	wait(1);
+	}
+	node_num1 = 1;
+	z=999999;
+	while (path_getnode(my,node_num1, vnode1, nodeskills)!=0)
+	{
+		v=vec_dist(my.x,vnode1);
+		if (v<=z)
+		{
+			z=v;
+			node_count=node_num1;			
+		}
+		node_num1+=1;		
+	}
+	
+	z=0;
+	node_num1=node_count;	
+	path_getnode(my,node_num1, vnode1, nodeskills);	
+	vnode1.z+=40;
+	you=NULL;
+	if(vec_dist(vnode1,player.x)>2500)
+	{
+	c_scan(vnode1,my.pan,vector(360,0,800),SCAN_FLAG2);
+	if (!you)
+	{
+		ltypecar = floor(random(3));
+		if (ltypecar<1){	LCar = ent_create("350z.mdl",vnode1,ACar_Enemy);}else
+		if (ltypecar<2){	LCar = ent_create("cap.mdl",vnode1,ACar_Enemy);}else
+		{	LCar = ent_create("celica.mdl",vnode1,ACar_Enemy);}
+	}
+}
+
+  
+  
+}
+	wait(-1);
+}
+	
 }
 
 
@@ -533,49 +633,13 @@ action Player()
 	player = me;
 }
 
+
+
 action ACar()
 { //return 0;
-	set(my,FLAG2);
-	set(my,FLAG1);
-	AssignEnvMap(my);
-	var accel=0;
-	var steer=0;
-	var gravity[3] = {0,0, -386};
-	VECTOR temp;
-	var v,z;
-	actor(PH_CONVEX);
-	pXent_setfriction(my,50); 
-	player=me;
-	VECTOR temp2;
-	pXent_setmassoffset(my,vector(0,0,-10),NULL);
 
-	ENTITY* FLwheel = ent_create("buggy_rad1.mdl",vector(my.x+86,my.y-43,my.z+13),NULL);
-	ENTITY* FRwheel = ent_create("buggy_rad1.mdl",vector(my.x+86,my.y+43,my.z+13),NULL);
-	ENTITY* BLwheel = ent_create("buggy_rad1.mdl",vector(my.x-70,my.y+43,my.z+13),NULL);
-	ENTITY* BRwheel = ent_create("buggy_rad1.mdl",vector(my.x-70,my.y-43,my.z+13),NULL);
+
 	
-	pXcon_add ( PH_WHEEL, FLwheel, me, 0 );
-	pXcon_add ( PH_WHEEL, FRwheel, me, 0 );
-	pXcon_add ( PH_WHEEL, BLwheel, me, 0 );
-	pXcon_add ( PH_WHEEL, BRwheel, me, 0 );
-	
-	// use this to setup px settings
-	temp.x=20000;  //wheel suspension spring constant (default: 1000). Adjust this to the car mass and gravity.
-	temp.y=500;    //wheel suspension damper constant (default: 100). 
-	temp.z=6;      //wheel suspension way in quants (default: wheel radius). 
-	temp2.x=500;   //wheel longitudinal friction curve scale factor in percent (default = 100). 
-	temp2.y=100;   //wheel lateral friction curve scale factor in percent (default = 100). Set this to a high value for vehicles on rails. 
-	temp2.z=0;     //not used yet. 
-	
-	pXcon_setparams2 (FLwheel, NULL,temp2, temp);
-	pXcon_setparams2 (FRwheel, NULL, temp2, temp);
-	pXcon_setparams2 (BLwheel, NULL, temp2, temp);
-	pXcon_setparams2 (BRwheel, NULL, temp2, temp);
-	set(FLwheel,INVISIBLE);
-	set(FRwheel,INVISIBLE);
-	set(BLwheel,INVISIBLE);
-	set(BRwheel,INVISIBLE);
-	wait(1);
 	tcamera_mode = 1;
 	tcamera_dist = 450;
 	tcamera_height = 150;
@@ -583,26 +647,117 @@ action ACar()
 	tcamera_maxDist = 2000;
 	tcamera_zoomDist = 2;
 	camera_startup();
+	
+	set(my,FLAG2);
+	set(my,FLAG1);
+	AssignEnvMap(my);
+	var accel=0;
+	var steer=0;
+	VECTOR temp;
+	var v,z;
+	actor(PH_CONVEX);
+	pXent_setfriction(my,50); 
+	player=me;
+	VECTOR temp2;
+	pXent_setmassoffset(my,vector(0,0,-30),NULL);
+	pXent_setmass(my, 100);
+
+	ENTITY* FLwheel = ent_create("buggy_rad1.mdl",vector(my.x+86,my.y-43,my.z-20),NULL);
+	ENTITY* FRwheel = ent_create("buggy_rad1.mdl",vector(my.x+86,my.y+43,my.z-20),NULL);
+	ENTITY* BLwheel = ent_create("buggy_rad1.mdl",vector(my.x-70,my.y-43,my.z-20),NULL);
+	ENTITY* BRwheel = ent_create("buggy_rad1.mdl",vector(my.x-70,my.y+43,my.z-20),NULL);
+	
+	
+	
+	pXent_setfriction(FLwheel,90); 
+	pXent_setfriction(FRwheel,90); 
+	pXent_setfriction(BLwheel,90); 
+	pXent_setfriction(BRwheel,90); 
+	
+	pXcon_add ( PH_WHEEL, FLwheel, me, 0 );
+	pXcon_add ( PH_WHEEL, FRwheel, me, 0 );
+	pXcon_add ( PH_WHEEL, BLwheel, me, 0 );	
+	pXcon_add ( PH_WHEEL, BRwheel, me, 0 );
+	
+	temp.x=1;   
+	temp.y=0;   
+	temp.z=0; 
+	
+	temp2.x=0.1;   
+	temp2.y=-0.1;   
+	temp2.z=-1; 	
+	pXcon_setparams1 (FLwheel, NULL, vec_normalize(temp2,1), temp);
+	
+	temp2.x=0.1;   
+	temp2.y=-0.1;   
+	temp2.z=-1; 	
+	pXcon_setparams1 (BLwheel, NULL, vec_normalize(temp2,1), temp);
+	
+	temp2.x=-0.1;   
+	temp2.y=0.1;   
+	temp2.z=-1; 	
+	pXcon_setparams1 (FRwheel, NULL, vec_normalize(temp2,1), temp);	
+	
+	temp2.x=-0.1;   
+	temp2.y=0.1;   
+	temp2.z=-1; 	
+	pXcon_setparams1 (BRwheel, NULL, vec_normalize(temp2,1), temp);
+	
+	
+	// use this to setup px settings
+	temp.x=2000;  //wheel suspension spring constant (default: 1000). Adjust this to the car mass and gravity.
+	temp.y=200;    //wheel suspension damper constant (default: 100). 
+	temp.z=6;      //wheel suspension way in quants (default: wheel radius). 
+	temp2.x=100;   //wheel longitudinal friction curve scale factor in percent (default = 100). 
+	temp2.y=70;   //wheel lateral friction curve scale factor in percent (default = 100). Set this to a high value for vehicles on rails. 
+	temp2.z=0;     //not used yet. 
+	
+	
+	
+	pXcon_setparams2 (FLwheel, NULL, temp2, temp);
+	pXcon_setparams2 (FRwheel, NULL, temp2, temp);
+	pXcon_setparams2 (BLwheel, NULL, temp2, temp);
+	pXcon_setparams2 (BRwheel, NULL, temp2, temp);
+	
+	set(FLwheel,INVISIBLE);
+	set(FRwheel,INVISIBLE);
+	set(BLwheel,INVISIBLE);
+	set(BRwheel,INVISIBLE);
+	wait(1);
+
 	var carai_engine = ent_playloop(my, carai1_wav, 300);
+	var lsteer=0,lsteeror=0;
+	var lbrake;
+	var lanim=0;
 	while(1)
 	{
-		accel=-(key_w-key_s)*13500;		
-		//	vg=nv;
+		accel=(key_w-key_s)*7500;		
+			vg=lsteer;
 		temp.x=accel*cosv(my.pan)-0*sinv(my.pan);
 		temp.y=0*cosv(my.pan)+accel*sinv(my.pan);
 		temp.z=0;
-		
+//		
 		pXent_getvelocity(my, temp, nullvector);
 		v= vec_dist(temp,nullvector)/10;
 		my.skill1=v;	
 		snd_tune(carai_engine, 0, v, 0);
-		//	vg=bmap_skycube.width;
-		steer=-(key_a-key_d);		
+	
+		steer=-(key_a-key_d);
+		lsteeror = steer*(30-clamp(v/4,0,15));	
 		
-		pXcon_setwheel (FLwheel,steer*(20-clamp(v/4,0,15)),0,0);
-		pXcon_setwheel (FRwheel,steer*(20-clamp(v/4,0,15)),0,0); 
-		pXcon_setwheel (BLwheel,0,accel/2,key_space*2000);
-		pXcon_setwheel (BRwheel,0,accel/2,key_space*2000);
+		lanim=lanim+v/300;
+		if (lanim>2){lanim=0;}
+		
+		my.skin=1+(key_s*2)+lanim;
+			
+		if (lsteer<lsteeror){lsteer+=10*time_step;}else
+		if (lsteer>lsteeror){lsteer-=10*time_step;}
+		if (v>10)
+		{if (accel<0){lbrake=-accel;}else{lbrake=0;}}else{lbrake=0;}
+		pXcon_setwheel (FLwheel,floor(lsteer)-1,0,lbrake);
+		pXcon_setwheel (FRwheel,floor(lsteer)+1,0,lbrake); 
+		pXcon_setwheel (BLwheel,-1,accel/((v/50)+1),lbrake+key_space*4000);
+		pXcon_setwheel (BRwheel,1,accel/((v/50)+1),lbrake+key_space*4000);
 		
 		wait(1);		
 	}

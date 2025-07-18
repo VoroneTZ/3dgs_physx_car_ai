@@ -68,7 +68,7 @@ float4 envglass_PS ( VS_OUTPUT In) : COLOR
 	float3 vec = reflect(normalize(In.Eye), norm);
 	float4 Environment = texCUBE(sEnvironment,vec);
 
-	OutColor.rgb = (0.3*lerp(color.rgb,0.5,0) + fAlbedo*Environment.rgb*2);
+	OutColor.rgb = (0.8*lerp(color.rgb,0.5,0) + fAlbedo*Environment.rgb/2);
 	OutColor.a = 1;
 	return OutColor;
 }

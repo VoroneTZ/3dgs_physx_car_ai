@@ -10,6 +10,7 @@ var up[3]={90,90,0};
 
 
 int nv=2;//view level global encounter 
+int FDestroyMe=1; //set 0 to free mem
 
 function mtl_Dynenvmap_init()
 {
@@ -51,7 +52,7 @@ function mtl_Dynenvmap_init()
 	mtl.matrix42 = 0;
 	mtl.matrix43 = 0;	
 
-	while (lnv==my.skill14)
+	while (FDestroyMe=1)
 	{
 		
 		if (!(my.eflags&CLIPPED))
@@ -88,6 +89,8 @@ function mtl_Dynenvmap_init()
 		else
 		wait(5);
 	}
+	ptr_remove (cv_w);
+	ptr_remove (lbm);
 }
 
 
@@ -173,7 +176,16 @@ function AssignEnvMap(ENTITY* AEnt)
 	l_DynEnvMap.event = mtl_Dynenvmap_init;	
 	l_DynEnvMap.effect = "envmirror.fx";
 	AEnt.material = l_DynEnvMap;
-	
+	while (FDestroyMe=1)
+	{wait(1);}
+	ptr_remove(l_DynEnvMap);
+}
+
+
+MATERIAL* F_SEnvMap =
+{
+	event = mtl_Stenvmap_init;	
+	effect = "envmirror.fx";
 }
 
 
@@ -184,7 +196,9 @@ function AssignStaticEnvMap(ENTITY* AEnt)
 	l_SEnvMap.event = mtl_Stenvmap_init;	
 	l_SEnvMap.effect = "envmirror.fx";
 	AEnt.material = l_SEnvMap;
-	
+	while (FDestroyMe=1)
+	{wait(1);}
+	ptr_remove(l_SEnvMap);
 }
 
 action mat_S_EnvMap()

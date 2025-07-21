@@ -186,13 +186,14 @@ action ACar_Enemy()
 	set(FRwheel,INVISIBLE);
 	set(BLwheel,INVISIBLE);
 	set(BRwheel,INVISIBLE);
+
 	
 	vec_set(temp,vnode2); 
   vec_sub(temp,my.x);
   var temp3 =my.pan;
   vec_to_angle(temp3,temp);
   pXent_rotate (my, NULL, temp3); 
-
+ pXent_addforcelocal( me, nullvector , _vec(5000,0,0) );
 	STRING* debugs="1";
 	ANGLE vangle;
 	ANGLE v3angle;
@@ -200,7 +201,8 @@ action ACar_Enemy()
 	var brake;
 	wait(1);
 	var carai_engine = ent_playloop(my, carai1_wav, 300);
-		while (my.alpha<100){my.alpha+=1; wait(1);}reset(my,TRANSLUCENT);
+
+		while (my.alpha<100){my.alpha+=1;	pXent_addforcelocal( me, _vec(100*cos(my.pan),100*sin(my.pan),0) , _vec(100,0,0)); wait(1);}reset(my,TRANSLUCENT);
 		AssignEnvMap(my);
 	var lanim,lamin2;	
 	while(1)
@@ -728,7 +730,7 @@ action ACar()
 	var carai_engine = ent_playloop(my, carai1_wav, 300);
 	var lsteer=0,lsteeror=0;
 	var lbrake;
-	var lanim=0;
+	var lanim=0;//pXent_addforcelocal( me, _vec(5000*cos(my.pan),5000*sin(my.pan),0) , _vec(100,0,0));
 	while(1)
 	{
 		accel=(key_w-key_s)*7500;		
